@@ -72,6 +72,18 @@ cmds.xform('ik_arm_grp', translation = pos, worldSpace=True)
 # Parent the IkHandle below the hand ctl shape
 cmds.parent( 'ikh_arm', 'ik_arm_ctl' )
 
+# Create PoleVector Group & Control
+cmds.group(empty=True, name='ik_poleVect_grp')
+cmds.circle(name='ik_poleVect_ctl',  normal=(1, 0, 0), center=(0, 0, 0) )
+cmds.parent( 'ik_poleVect_ctl', 'ik_poleVect_grp' )
+# Find the lenght of the Arm (by looking at the X Axis)
+armLengh = cmds.xform('ik_elbow_jnt', translation = True, worldSpace=False, query=True)[0]
+# Move the poleVector to the back at the Lenght+1 of the arm
+cmds.xform('ik_poleVect_grp', translation = [0,0,((armLengh*-1)-1)], worldSpace=True)
+
+# Contraint the PoleVector to the IKHandle
+cmds.poleVectorConstraint( 'ik_poleVect_ctl', 'ikh_arm' )
+
 
 
 # Create FK Rig
