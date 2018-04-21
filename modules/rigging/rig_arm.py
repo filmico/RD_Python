@@ -58,3 +58,22 @@ cmds.joint( name='rig_wristEnd_jnt' ,p=[7, 0, 1] )
 cmds.joint('rig_wristEnd_jnt', edit=True, zeroScaleOrient = True, orientJoint = 'xyz', secondaryAxisOrient = 'yup')
 
 cmds.select(clear=True)
+
+# Create IK Rig
+cmds.ikHandle( name='ikh_arm', startJoint='ik_shoulder_jnt', endEffector='ik_wrist_jnt' , solver='ikRPsolver', priority=2, weight=1)
+# Create Control GRP and Shape
+cmds.group(empty=True, name='ik_arm_grp')
+cmds.circle(name='ik_arm_ctl',  normal=(1, 0, 0), center=(0, 0, 0) )
+cmds.parent( 'ik_arm_ctl', 'ik_arm_grp' )
+# Obtain the Wrist Postion
+pos = cmds.xform('ik_wrist_jnt', translation = True, worldSpace=True, query=True)
+# Move the Group to the IK position
+cmds.xform('ik_arm_grp', translation = pos, worldSpace=True)
+# Parent the IkHandle below the hand ctl shape
+cmds.parent( 'ikh_arm', 'ik_arm_ctl' )
+
+
+
+# Create FK Rig
+
+# Connect IK and FK to Rig joints
