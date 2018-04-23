@@ -18,5 +18,3 @@ for item in fruit:
     else:
         print 'feed it to the chickens'
         
-
-    
