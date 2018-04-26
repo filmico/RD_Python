@@ -2,6 +2,9 @@ import maya.cmds as cmds
 
 def rigarm(*args):
     print 'Rig Arm Button Pressed!'
+    import rig.rig_arm as rig_arm
+    reload(rig_arm)
+    rig_arm.createArm()
 
 
 # Creates a menu in the main Maya Interface
