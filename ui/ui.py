@@ -10,7 +10,4 @@ myMenu = cmds.menu('RDojo_Menu', label='RD_Menu', tearOff=True, parent='MayaWind
 cmds.menuItem(label='Rig_Arm', parent=myMenu, command=rigarm)
 
 
-
-
-
 print "UI Loaded!"
