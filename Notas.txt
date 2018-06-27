@@ -1,0 +1,212 @@
+0) Hacer que Maya arranque sin la consola abierta:
+    Modificar el acceso directo para que tenga -hideConsole al final
+    
+	"C:\Program Files\Autodesk\Maya2016\bin\maya.exe" -hideConsole
+
+1) Como setear el Python path en el arranque de Maya
+	http://download.autodesk.com/global/docs/maya2013/en_us/index.html?url=files/Python_Python_in_Maya.htm,topicNumber=d30e725143
+
+	Leer el readme y el archivo en la carpeta: 
+	------------------------------------------
+	C:\Rigging Dojo - Python 101 (On Demand)\RD_Python\000_Ger_Test\Maya Startup Script (Python Path)
+
+	Para setear el path de manera dinamica en el mismo script editor del maya hacer lo siguiente:
+
+	import sys
+	sys.path.append('c:/dir1/dir2/scripts')
+
+
+2) Break Points en el editor externo
+
+	http://download.autodesk.com/global/docs/maya2013/en_us/index.html?url=files/Python_Python_in_Maya.htm,topicNumber=d30e725143
+
+	https://docs.python.org/3/library/pdb.html
+
+3) Free IDE  (pycharm)
+
+	https://www.jetbrains.com/pycharm/documentation/
+
+4) The Python Reference
+	https://docs.python.org/2/reference/index.html
+
+
+5) A Bit about Modules
+   -------------------
+
+https://techartsurvival.blogspot.co.uk/2014/01/mayas-mildy-magical-modules.html
+
+	a) Crear un modulo ej: RiggingTool.mod en la siguiente ruta C:\Program Files\Common Files\Autodesk Shared\Modules\Maya\2016\RiggingTool.mod
+	   Tambien podemos crar la carpeta modules en misDocumentos y poner ahi el archivo C:\Users\filmico\Documents\maya\modules\RiggingTool.mod
+	   
+	b) El contenido tiene que ser el nombre del modulo la version y la ruta:   
+
+		+ Rigging_Tool 1.0 C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
+
+	c) Agregamos una segunda linea con una variable de entorno
+
+	    RIGGING_TOOL=C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
+
+	d) Agregamos una tercer linea para que maya agregue un path para los scripts
+
+		scripts: C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
+
+
+	EL Archivo RiggingTool.mod deberia quedar asi:
+
+		+ Rigging_Tool 1.0 C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
+		RIGGING_TOOL=C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
+		scripts: C:\Rigging Dojo - Python 101 (On Demand)\RD_Python	
+
+
+	c) Crear la rutas C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
+
+	d) Crear un archivo userSetup.py de python que haga un print para verificar que funciona:
+
+		print 'In Rig Tool'
+
+	e) Verificar lanzando el Maya que lo primero que se carga en la consola es este modulo y realiza la impresion: In Rig Tool	
+
+	f) Final Check
+
+	# Check the module loads the path correctly
+
+	import sys
+	for s in sys.path:
+		print s
+
+	# Check were Maya look for modules	
+	import os
+	print os.environ['MAYA_MODULE_PATH']
+
+	# if we need the module to be visible for all versions of maya, they must be placed here
+	# C:\Users\filmico\Documents\maya\modules
+
+	# if we need the module to be visible just for an specific Maya version, the must be places here
+	# C:\Users\filmico\Documents\maya\2016\modules
+
+	# Finally, check that maya knows were our modole lives. We call it by his name
+	print os.environ['RIGGING_TOOL']
+
+
+	The advantage of all this is that in our tool, we do not need to type the following each time:
+		C:/Rigging Dojo - Python 101 (On Demand)/RD_Python
+
+	Instead, we can add a new folder in the following way:
+		os.environ['RIGGING_TOOL'] + '/rig'
+
+
+
+
+Week 4:
+-------
+
+Startup del Maya
+----------------
+Cuando Maya arranaca busca scripts en C:\Users\filmico\Documents\maya\scripts
+Ahi hay un archivo llamado userSetup.py donde podemos indicar los path que queremos que 
+se agreguen al momento del arranque.
+
+C:\Users\filmico\Documents\maya\scripts\userSetup.py
+----------------------------------------------------
+import os
+import sys
+import maya.cmds as cmds
+print "In User Setup"
+
+# Agregamos los path que necesitamos
+sys.path.append('C:/Rigging Dojo - Python 101 (On Demand)/RD_Python')
+# Importamos startup.py de la carpeta que apendeamos recien.
+cmds.evalDeferred('import startup')
+
+C:/Rigging Dojo - Python 101 (On Demand)/RD_Python/setup.py
+-----------------------------------------------------------
+print 'Startup!'
+
+Cuando el maya arrnca deberiamos ver en la consola el print Startup!
+
+Tambien podemos comprobar si el path fue cargado usando los siguientes comandos en la consola del maya
+
+import sys
+for s in sys.path:
+	print s
+
+
+
+
+Recapitulando:
+==============
+1) Maya carga el siguiente archivo  C:\Users\filmico\Documents\maya\scripts\userSetup.py
+   - El mismo abre el puerto 4434 para comunicarse con un IDE externo
+   - Apendea el path C:/Rigging Dojo - Python 101 (On Demand)/RD_Python/
+   - Importa el archivo en idle startup.py del path apendeado
+
+2) startup.py  en el root de la carpeta apendeada
+	- Statup lo podemos usar para que maya cargue cosas que siempre queremos usar
+	como el frame rate, las unidades, etc
+	tambien lo usamos para importar nuestras herramientas. En este caso la ui
+
+	import ui.ui as ui    # El primer ui refiere al directorio. el segundo al .py adentro del directorio.
+	reload(ui)  # left it like this in develop mode
+
+
+
+
+3) Modulo: 
+   - Por otro lado, en la carpeta C:\Users\filmico\Documents\maya\2016\modules
+   hay un archivo llamado RiggingTool.mod que carga un nuevo modulo y apunta a la misma carpeta custom que estamos usando.
+
+   - Su conenido es el siguiente:
+
+	+ Rigging_Tool 1.0 C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
+	RIGGING_TOOL=C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
+	scripts: C:\Rigging Dojo - Python 101 (On Demand)\RD_Python   
+
+   - Por diseño el modulo carga automaticamente el archivo userSetup.py que se encuentre en la raiz del directorio que indica el modulo en el tag scripts: 
+
+
+
+Links:
+-------
+https://ondemand.riggingdojo.com/products/maya-python-101-course/categories/528216/posts/1711450
+http://help.autodesk.com/view/MAYAUL/2016/ENU/
+
+Free Tutorial Copado
+--------------------
+http://zurbrigg.com/training
+
+https://github.com/filmico/RD_Python/tree/gverrone
+
+https://www.cinesite.com/vacancies/junior-pipeline-developer/
+
+Tutoriales de Rigg Baratos y parecen buenos
+-------------------------------------------
+https://blaabjergb.com/facerig/
+
+Tutorial Cuello con colision con la ropa
+-----------------------------------------
+Collar rig with joints and cMuscleKeepOut
+
+http://www.rihamtoulan.com/blog/2018/3/24/faking-collisions-with-joints-based-setup-8snd2
+
+
+
+
+
+
+
+
+
+
+
+Para Continuar:
+================
+Week 5
+
+W5\Exceptions\test01.py
+
+https://ondemand.riggingdojo.com/products/maya-python-101-course/categories/529289/posts/1714960
+https://ondemand.riggingdojo.com/products/maya-python-101-course/categories/529289/posts/1714940
+
+https://docs.python.org/2/tutorial/classes.html
+
+https://www.youtube.com/watch?v=E7voPQQtO6w
