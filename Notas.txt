@@ -29,15 +29,144 @@
 4) The Python Reference
 	https://docs.python.org/2/reference/index.html
 
+5) Imprimir la version de Python que esta usando Maya
 
-5) A Bit about Modules
+	import sys
+	print (sys.version)
+
+
+
+
+
+Week 1:
+=======
+- Que veremos
+- Que IDE usar
+- Git y GitHub
+
+- Sublime:
+		Project -> Add Folder to Project              Abrir la carpeta donde tenemos el repo de Git-Hub
+
+Week 2:
+========
+
+- Variables
+  ----------
+
+	a = 1   
+	b = 'hola'
+
+- Listas
+  ------    
+
+	a = [1,2,'joe']
+
+- if
+  --      
+
+	if (x > 10):
+		nnnnnn
+  	elif (x = 10):
+  		ooooooo
+	else:
+		jjjjjj
+
+- Operators
+  ---------
+
+	== is equal to
+	!= is not equal to
+	> is greater than
+	< is less than
+	>= is greater than or equal to
+	<= is less than or equal to
+
+- Loops
+  -----
+  	lista = [1,2,'joe']
+
+  	for item in lista:
+  		print item
+
+- Functions
+  ---------
+
+  	def myFunction(param1, param2 = 10):
+  		print(param1 + param2)
+  		result = param1 + param2
+		return result
+
+	a = myFunction(5, 6)
+	print a
+
+	Si param2 no se especifica, usa el valor default 10
+
+- Builtin Functions
+  -----------------
+
+  len()
+  -----
+		fruit = [‘apple’, ‘orange’, ‘banana’, ‘kiwi’, ‘pear’]
+		x = len(fruit)
+		print x
+
+
+  range()
+  -------
+	  myList = range(7)
+	  print myList
+
+	  >> [0, 1, 2, 3, 4, 5, 6]
+
+
+- Methods
+	Cuando usamos la notacion de punto en los datatypes propios como las variables, listas, diccionarios, etc estamos ingresando a los metodos
+	Los metodos, se escriben con la misma notacion de las funciones aaa.bbb pero se llaman metodos para diferenciarlos de nuestras funciones
+
+	lista = [10, 20, 30]
+	lista.reverse()
+	print lista
+
+	‘the fat cat sat on the mat’.upper()
+	‘the fat cat sat on the mat’.replace(‘cat’, ‘dog’)
+
+	‘the fat cat sat on the mat’.split()
+	>>  ['the', 'fat', 'cat', 'sat', 'on', 'the', 'mat'] 
+	
+
+- Modules
+  -------
+  Cada archivo .py representa un modulo y para poder usar sus Functions debemos importarlo en la cabecera de otro script
+
+  script1.py
+
+  En el segundo script y para usar las funciones de script1.py comenzariamos escribiendo
+
+  import script1.py
+
+  A su vez, para que esto funcione, Maya debe conocer la ruta de nuestros scripts utilizando lo que se explica a continuacion
+
+
+   A Bit about Modules
    -------------------
 
-https://techartsurvival.blogspot.co.uk/2014/01/mayas-mildy-magical-modules.html
+	https://techartsurvival.blogspot.co.uk/2014/01/mayas-mildy-magical-modules.html
 
-	a) Crear un modulo ej: RiggingTool.mod en la siguiente ruta C:\Program Files\Common Files\Autodesk Shared\Modules\Maya\2016\RiggingTool.mod
-	   Tambien podemos crar la carpeta modules en misDocumentos y poner ahi el archivo C:\Users\filmico\Documents\maya\modules\RiggingTool.mod
-	   
+	a) Los Modulos son archivos .mod que le indican a Maya donde buscar los scripts. Si la carpeta modules no existe hay que crearla en alguna de las siguientes ubicaciones:
+
+		1) C:\Program Files\Common Files\Autodesk Shared\Modules\Maya\2016\RiggingTool.mod   
+			Para todos los usuarios que usen el maya 2016
+
+		2) C:\Users\filmico\Documents\maya\modules\RiggingTool.mod   
+			Solo para el usuario filmico
+
+		3) C:\Users\filmico\Documents\maya\2016\modules\RiggingTool.mod
+			Solo para el usuario filmico y maya 2016. 
+			Se uso este en el curso
+
+		Observamos que al final creamos un archivo llamado RiggingTools.mod
+		Tambien observaremos mas adelante que si creamos un archivo llamado userSetup.py en la ruta a donde apunta el contenido del modulo, se carga ese archivo de python automaticamente
+
 	b) El contenido tiene que ser el nombre del modulo la version y la ruta:   
 
 		+ Rigging_Tool 1.0 C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
@@ -49,7 +178,6 @@ https://techartsurvival.blogspot.co.uk/2014/01/mayas-mildy-magical-modules.html
 	d) Agregamos una tercer linea para que maya agregue un path para los scripts
 
 		scripts: C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
-
 
 	EL Archivo RiggingTool.mod deberia quedar asi:
 
@@ -87,7 +215,6 @@ https://techartsurvival.blogspot.co.uk/2014/01/mayas-mildy-magical-modules.html
 	# Finally, check that maya knows were our modole lives. We call it by his name
 	print os.environ['RIGGING_TOOL']
 
-
 	The advantage of all this is that in our tool, we do not need to type the following each time:
 		C:/Rigging Dojo - Python 101 (On Demand)/RD_Python
 
@@ -96,13 +223,50 @@ https://techartsurvival.blogspot.co.uk/2014/01/mayas-mildy-magical-modules.html
 
 
 
+	Con todo esto seteado, ya podemos usar import blabla.py y maya vera esos scripts que queremos importar de nuestro custom path  
+
+
+	Funciones de los modulos importados
+	-----------------------------------
+	Supongamos que importamos el modulo primerScript.py y que este tiene una funcion llamada sumar
+	Para realizar la suma escribiriamos
+
+	import primerScript.py
+	primerScript.sumar()
+
+	o usar un alias as
+
+	import primerScript.py as ps
+	ps.sumar()	
+
+	import maya.cmds as cmds
+	cmds.sphere(r=10)
+
+Crear y buscar elementos en maya con python
+--------------------------------------------
+	- Huesos en Mel
+		joint -p -4.84587 0 8.902362 ;
+
+	- Conversion a Python (Le agregamos un nombre)
+		cmds.joint( n = 'Jnt01', p=[-4.84587, 0, 8.902362])
+
+	- Buscar Posicion de Hueso con Python
+		cmds.joint( 'Jnt01', p=True, q=True)
+
+	- Mover el hueso de posicion
+		cmds.joint( 'Jnt01', p=[0, 0, 0], e=True)
+
+
+
+
+Ver los ejemplos de \RD_Python\000_Ger_Test\W2
 
 Week 4:
 -------
 
 Startup del Maya
 ----------------
-Cuando Maya arranaca busca scripts en C:\Users\filmico\Documents\maya\scripts
+Cuando Maya arranca busca scripts en C:\Users\filmico\Documents\maya\scripts
 Ahi hay un archivo llamado userSetup.py donde podemos indicar los path que queremos que 
 se agreguen al momento del arranque.
 
