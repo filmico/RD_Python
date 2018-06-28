@@ -1,0 +1,68 @@
+Week 4:
+-------
+
+Startup del Maya
+----------------
+Cuando Maya arranca busca scripts en C:\Users\filmico\Documents\maya\scripts
+Ahi hay un archivo llamado userSetup.py donde podemos indicar los path que queremos que 
+se agreguen al momento del arranque.
+
+C:\Users\filmico\Documents\maya\scripts\userSetup.py
+----------------------------------------------------
+import os
+import sys
+import maya.cmds as cmds
+print "In User Setup"
+
+# Agregamos los path que necesitamos
+sys.path.append('C:/Rigging Dojo - Python 101 (On Demand)/RD_Python')
+# Importamos startup.py de la carpeta que apendeamos recien.
+cmds.evalDeferred('import startup')
+
+C:/Rigging Dojo - Python 101 (On Demand)/RD_Python/setup.py
+-----------------------------------------------------------
+print 'Startup!'
+
+Cuando el maya arrnca deberiamos ver en la consola el print Startup!
+
+Tambien podemos comprobar si el path fue cargado usando los siguientes comandos en la consola del maya
+
+import sys
+for s in sys.path:
+	print s
+
+
+
+
+Recapitulando:
+==============
+1) Maya carga el siguiente archivo  C:\Users\filmico\Documents\maya\scripts\userSetup.py
+   - El mismo abre el puerto 4434 para comunicarse con un IDE externo
+   - Apendea el path C:/Rigging Dojo - Python 101 (On Demand)/RD_Python/
+   - Importa el archivo en idle startup.py del path apendeado
+
+2) startup.py  en el root de la carpeta apendeada
+	- Statup lo podemos usar para que maya cargue cosas que siempre queremos usar
+	como el frame rate, las unidades, etc
+	tambien lo usamos para importar nuestras herramientas. En este caso la ui
+
+	import ui.ui as ui    # El primer ui refiere al directorio. el segundo al .py adentro del directorio.
+	reload(ui)  # left it like this in develop mode
+
+
+
+
+3) Modulo: 
+   - Por otro lado, en la carpeta C:\Users\filmico\Documents\maya\2016\modules
+   hay un archivo llamado RiggingTool.mod que carga un nuevo modulo y apunta a la misma carpeta custom que estamos usando.
+
+   - Su conenido es el siguiente:
+
+	+ Rigging_Tool 1.0 C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
+	RIGGING_TOOL=C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
+	scripts: C:\Rigging Dojo - Python 101 (On Demand)\RD_Python   
+
+   - Por diseño el modulo carga automaticamente el archivo userSetup.py que se encuentre en la raiz del directorio que indica el modulo en el tag scripts: 
+
+
+

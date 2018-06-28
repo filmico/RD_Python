@@ -1,0 +1,45 @@
+Week 1:
+=======
+- Que veremos
+- Que IDE usar
+- Git y GitHub
+
+- Sublime:
+		Project -> Add Folder to Project              Abrir la carpeta donde tenemos el repo de Git-Hub
+
+
+0) Hacer que Maya arranque sin la consola abierta:
+    Modificar el acceso directo para que tenga -hideConsole al final
+    
+	"C:\Program Files\Autodesk\Maya2016\bin\maya.exe" -hideConsole
+
+1) Como setear el Python path en el arranque de Maya
+	http://download.autodesk.com/global/docs/maya2013/en_us/index.html?url=files/Python_Python_in_Maya.htm,topicNumber=d30e725143
+
+	Leer el readme y el archivo en la carpeta: 
+	------------------------------------------
+	C:\Rigging Dojo - Python 101 (On Demand)\RD_Python\000_Ger_Test\Maya Startup Script (Python Path)
+
+	Para setear el path de manera dinamica en el mismo script editor del maya hacer lo siguiente:
+
+	import sys
+	sys.path.append('c:/dir1/dir2/scripts')
+
+
+2) Break Points en el editor externo
+
+	http://download.autodesk.com/global/docs/maya2013/en_us/index.html?url=files/Python_Python_in_Maya.htm,topicNumber=d30e725143
+
+	https://docs.python.org/3/library/pdb.html
+
+3) Free IDE  (pycharm)
+
+	https://www.jetbrains.com/pycharm/documentation/
+
+4) The Python Reference
+	https://docs.python.org/2/reference/index.html
+
+5) Imprimir la version de Python que esta usando Maya
+
+	import sys
+	print (sys.version)

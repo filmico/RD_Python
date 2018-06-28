@@ -1,0 +1,22 @@
+Links:
+-------
+https://ondemand.riggingdojo.com/products/maya-python-101-course/categories/528216/posts/1711450
+http://help.autodesk.com/view/MAYAUL/2016/ENU/
+
+Free Tutorial Copado
+--------------------
+http://zurbrigg.com/training
+
+https://github.com/filmico/RD_Python/tree/gverrone
+
+https://www.cinesite.com/vacancies/junior-pipeline-developer/
+
+Tutoriales de Rigg Baratos y parecen buenos
+-------------------------------------------
+https://blaabjergb.com/facerig/
+
+Tutorial Cuello con colision con la ropa
+-----------------------------------------
+Collar rig with joints and cMuscleKeepOut
+
+http://www.rihamtoulan.com/blog/2018/3/24/faking-collisions-with-joints-based-setup-8snd2
