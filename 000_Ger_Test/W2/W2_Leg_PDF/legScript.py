@@ -127,11 +127,25 @@ cmds.connectAttr('mdNode_LegStretch.outputX', 'mdNode_AnkleStretch.input1X')
 cmds.connectAttr('mdNode_KneeStretch.outputX', 'ikj_knee.tx') 
 cmds.connectAttr('mdNode_AnkleStretch.outputX', 'ikj_ankle.tx')
 
+# Make a Toe Flap
+cmds.select('ctrl_leg')
+cmds.addAttr( shortName='Toe_Flap', longName='Toe_Flap', defaultValue=0, k=True)
+cmds.connectAttr('ctrl_leg.Toe_Flap', 'grp_flap.rx')
+
+# Pivot for Bank and Twist
+ballPos = cmds.xform('grp_ball', q=True, t=True, ws=True)
+cmds.xform('ctrl_footPivot', t=ballPos)
+cmds.group(n='grp_ctrl_footPivot', empty=True)
+cmds.parent('grp_ctrl_footPivot', 'ctrl_footPivot')
+cmds.parent('ctrl_footPivot', 'ctrl_leg')
+cmds.makeIdentity( apply=True )
 
 
+cmds.connectAttr('grp_ctrl_footPivot.translate', 'grp_footPivot.rotatePivot')
+cmds.xform('grp_ctrl_footPivot', t=ballPos)
 
-
-
-
-
-
+cmds.select('ctrl_leg')
+cmds.addAttr( shortName='Foot_Pivot', longName='Foot_Pivot', defaultValue=0, k=True)
+cmds.addAttr( shortName='Foot_Bank', longName='Foot_Bank', defaultValue=0, k=True)
+cmds.connectAttr('ctrl_leg.Foot_Pivot', 'grp_footPivot.ry')
+cmds.connectAttr('ctrl_leg.Foot_Bank', 'grp_footPivot.rz')
