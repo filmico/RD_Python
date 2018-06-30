@@ -88,7 +88,7 @@ cmds.xform('locator2', ws=True, t=anklePos)
 
 
 
-# Next we will need to ﬁgure out the length of the leg
+# Next we will need to ?gure out the length of the leg
 cmds.rename('distanceDimension1', 'disDimNode_legStretch')
 cmds.rename('locator1', 'lctrDis_hip')
 cmds.rename('locator2', 'lctrDis_ankle')
@@ -141,11 +141,13 @@ cmds.parent('ctrl_footPivot', 'ctrl_leg')
 cmds.makeIdentity( apply=True )
 
 
-cmds.connectAttr('grp_ctrl_footPivot.translate', 'grp_footPivot.rotatePivot')
 cmds.xform('grp_ctrl_footPivot', t=ballPos)
+cmds.connectAttr('grp_ctrl_footPivot.translate', 'grp_footPivot.rotatePivot')
+
 
 cmds.select('ctrl_leg')
 cmds.addAttr( shortName='Foot_Pivot', longName='Foot_Pivot', defaultValue=0, k=True)
 cmds.addAttr( shortName='Foot_Bank', longName='Foot_Bank', defaultValue=0, k=True)
 cmds.connectAttr('ctrl_leg.Foot_Pivot', 'grp_footPivot.ry')
 cmds.connectAttr('ctrl_leg.Foot_Bank', 'grp_footPivot.rz')
+
