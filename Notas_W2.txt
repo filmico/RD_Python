@@ -1,4 +1,7 @@
-Week 2:
+import maya.cmds as cmds
+# Find a node by UUID
+cmds.ls( 'C2BB8B0D-4B5B-FC00-017A-1D85C39AC3AE' )
+# Result: [u'ikj_hip'] #Week 2:
 ========
 
 - Variables
@@ -207,15 +210,148 @@ Crear y buscar elementos en maya con python
 	- Mover el hueso de posicion
 		cmds.joint( 'Jnt01', p=[0, 0, 0], e=True)
 
+Listar elementos
+----------------
+
+	El comando ls tiene muchisimo parametros para listar seleciones por tipo, por UUID, etc
+
+	# list all objects
+	cmds.ls()
+
+	# List all selected objects
+	cmds.ls( selection=True )
+
+	# Find a node by UUID
+	cmds.ls( 'C2BB8B0D-4B5B-FC00-017A-1D85C39AC3AE' )
+	# Result: [u'ikj_hip'] #
+
+	# Return a node's UUID
+	cmds.ls( 'persp', uuid=True )
+
+	# List all nodes below the selected node
+	cmds.ls( dag=True, ap=True, sl=True )
+
+	import maya.cmds as cmds
+	# Find a node by UUID
+	cmds.ls( 'C2BB8B0D-4B5B-FC00-017A-1D85C39AC3AE' )
+	# Result: [u'ikj_hip'] #
+
+	# When trying to find a list of all objects of a specific
+	# type, one approach might be to list all objects and then
+	# use the nodeType command to then filter the list. As in:
+	
+	allObjects = cmds.ls(l=True)
+	for obj in allObjects:
+	   if cmds.nodeType(obj) == 'surfaceShape':
+	     print obj
+
+	# The problem with this is that 'nodeType' returns the
+	# most derived type of the node. In this example, "surfaceShape"
+	# is a base type for nurbsSurface so nothing will be printed.
+	# To do this properly, the -typ/type flag should be used
+	# to list objects of a specific type as in:
+	
+	allObjects = cmds.ls(type='surfaceShape')
+	for obj in allObjects:
+	    print obj
+
+	# Return a node's UUID
+	cmds.ls( 'persp', uuid=True )
 
 
+Renombrar
+---------
+	myNode = mc.rename(myNode, ‘newNodeName’)
+
+Agrupar
+-------
+	#group the locator
+	mc.group(‘locator1’)
+
+	#create an empty group
+	myNull = mc.group(empty=True, name=’transformNode’)	
+
+Locator
+-------
+	loc = mc.spaceLocator(name=’myLocator’)
+
+Duplicate	
+---------
+	newLocator = mc.duplicate(‘locator1’, name=’myNewLocator’)
+
+Object Exist
+------------
+	if mc.objExists(‘locator7’):
+   		mc.rename(‘locator7’, ‘myLocator’)
 
 
+Delete
+------
+	mc.delete(‘locator1’)
+
+SettAttr
+--------
+	mc.setAttr(‘locator1.translateX’, 10.2)
+	#lock and hide an attribute
+	mc.setAttr(‘locator1.translateX’, lock=True, keyable=False)
+
+GetAttr
+-------
+	tx = mc.getAttr(‘locator1.translateX’)
+	print tx	
+
+AddAttr
+-------
+	mc.addAttr('locator1', longName='ikSwitch', attributeType='double', min=0, max=1)
+
+Parent
+------	
+	mc.parent(‘locator1’, ‘locator2’)
+	mc.parent(‘locator1’, world=True)
+
+ListRelatives
+-------------
+	#get the parent
+		mc.listRelatives(‘locator1’, parent=True)
+
+	#get the child
+		mc.listRelatives(‘locator1’, children=True)
+
+	#get all childrens
+		cmds.listRelatives('ikj_hip', ad=True)
+
+	#list all descendents, the whole hierarchy below
+		mc.listRelatives(‘locator1’, allDescendents)	
 
 
+ConnectAttr
+-----------
+	mc.connectAttr(‘locator1.translateX’, ‘locator2.translateY’)	
+
+Lisar Concexiones
+-----------------
+
+	#list all connections to all attributes, in and out
+
+	mc.listConnections(‘locator1’)
+
+	#list incoming connections driving tx
+	mc.listConnections(‘locator1.translateX’, source=True, destination=False)
+
+	#list outgoing connections that translateX is driving
+
+	mc.listConnections(‘locator1.translateX’, source=False, destination=True)
+
+IK Handle
+---------
+	mc.ikHandle(startJoint=’joint1’, endEffector=’joint3’, solver=’ikRPsolver’)
 
 
-
+Constraints
+-----------
+	mc.pointConstraint(‘locator2’, ‘locator1’)
+	orientConstraint: Pretty much the same
+	parentConstraint: Pretty much the same	
 
 
 
