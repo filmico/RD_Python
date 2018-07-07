@@ -12,5 +12,5 @@ myMenu = cmds.menu('RDojo_Menu', label='RD_Menu', tearOff=True, parent='MayaWind
 # Add Item
 cmds.menuItem(label='Rig_Arm', parent=myMenu, command=rigarm)
 
-
+# The following will be visible on the Maya Console but not in the Output window
 print "UI Loaded!"

@@ -1,3 +1,3 @@
-+ Rigging_Tool 1.0 C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
-RIGGING_TOOL=C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
-scripts: C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
++ Rigging_Tool 1.0 C:\RDojo_Python101\Repo
+RIGGING_TOOL=C:\RDojo_Python101\Repo
+scripts: C:\RDojo_Python101\Repo
