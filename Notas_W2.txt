@@ -1,8 +1,5 @@
-import maya.cmds as cmds
-# Find a node by UUID
-cmds.ls( 'C2BB8B0D-4B5B-FC00-017A-1D85C39AC3AE' )
-# Result: [u'ikj_hip'] #Week 2:
-========
+Week 2:
+=======
 
 - Variables
   ----------

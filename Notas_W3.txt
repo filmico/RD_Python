@@ -1,0 +1,485 @@
+Week 3:
+=======
+
+Help Python
+
+https://docs.python.org/2/reference/
+
+
+- Variables
+- Loops
+- Conditions
+- Syntax
+- Data types
+- Operations
+- Lists
+- Dictionaries
+- Index
+
+
+SetAttr
+-------
+	# Forma Larga
+	cmds.setAttr('locator1.translateX', 5)
+
+	# Forma Corta
+	cmds.setAttr('locator1.tx', 5)
+
+
+
+Listas y Loops
+--------------
+
+	- Construimos una lista anidada. Se llama anidada porque dentro de la lista hay listas
+
+	jtList = [['ik_shoulder_jnt', [0.0, 0.0, 0.0]], ['ik_elbow_jnt', [-1.0, 0.0, 2.0]], ['ik_wrist_jnt', [0.0, 0.0, 4.0]], ['ik_wristEnd_jnt', [0.0, 0.0, 6.0]] ]
+
+	jtList[0]  es el primer elemento que contiene la lista: ['ik_shoulder_jnt', [0.0, 0.0, 0.0]]
+
+	jtList[0][0]  es del primer elemento de la lista, listar el primer sub-elemento de la lista anidada: 'ik_shoulder_jnt'
+	jtList[0][1]  es del primer elemento de la lista, listar el segundo sub-elemento de la lista anidada: [0.0, 0.0, 0.0]
+
+	- Si Iteramos con un loop, podemos imprimir el contenido de la lista
+
+	for item in jtList:
+		print item
+
+
+	for item in jtList:
+		print item[0]
+
+	>>	ik_shoulder_jnt
+	>>	ik_elbow_jnt
+	>>	ik_wrist_jnt
+	>>	ik_wristEnd_jnt
+
+
+	for item in jtList:
+		print item[1]
+
+	>>  [0.0, 0.0, 0.0]
+	>>  [-1.0, 0.0, 2.0]
+	>>  [0.0, 0.0, 4.0]
+	>>  [0.0, 0.0, 6.0]		
+
+
+
+	
+Len
+---
+	print len(jtList)
+
+	>> 4
+	
+Range 
+-----
+	Genera una lista en un rango especificado. Si se especifica un solo numero, la lista va de 0 al numero anterior
+
+	print range(len(jtList))
+
+	>> [0, 1, 2, 3]
+
+
+	for item in range(len(jtList)):
+		print 'Element ' + str(item) + ' ' + jtList[item][0]		
+
+
+
+import maya.cmds as cmds
+# Forma Larga
+
+cmds.setAttr('locator1.translateX', 5)
+# Forma Corta
+cmds.setAttr('locator1.tx', 5)
+
+Variables
+----------
+shldrjnt = cmds.joint(n='joint_shoulder', p=[0.0, 4.0, 0.0])
+print shldrjnt
+
+Tipo
+----
+# Now we have our shoulder joint saved to the shldrjnt variable as a unicode object.
+print type(shldrjnt)
+
+Info
+----
+# We can get all sorts of information about the joint
+print cmds.xform(shldrjnt, q=True, ws=True, t=True)
+
+GetAttr
+-------
+# Dos Formas de Expresar lo mismo  (%s = single)
+print cmds.getAttr('%s.jointOrient' % shldrjnt)       # %s es el reemplazo de lo que viene despues del %  la s despues del % es de string.
+print cmds.getAttr(shldrjnt + '.jointOrient')		
+
+
+Scopes
+------
+
+	- Las variables que definimos dentro de los loops, se ven afuera.
+	  No podemos inicialarlas en los loops porque siempre perderan su valor anterior.
+
+
+
+	import maya.cmds as cmds
+	 
+	# Difine a list of strings and assign it to the mylist variable.
+	mylist = ('a', 'b')
+	 
+	# newvar = [] 
+	# Enter a for loop and print each item in my list
+	for item in mylist:
+	    # Hit tab to indicate the next line is part of the loop
+	     
+	    # Create an empty list in the "scope" of the loop. 
+	    # This inside the loop, will erase the previous list and start again loosing 'a'
+	    newvar = []
+	     
+	    # Append item to newvar
+	    newvar.append(item)
+	 
+	print newvar
+
+Append
+------
+
+	import maya.cmds as cmds
+	 
+	lista1 = ['foot_Jnt', [0.0, 1.0, 0.0]]
+	lista2 = ['neck_Jnt', [0.0, 1.0, 0.0]]
+
+	lista3 = []
+
+	lista3.append(lista1)
+	lista3.append(lista2)
+
+	print lista3	
+
+Formato
+-------
+
+	- El formato en python es muy util para concatenar o escapar al valor de una variable y hacer reemplazos in-line
+
+	import maya.cmds as cmds
+	 
+	%s STRING
+	---------
+	print ('%s %s' % ('one', 'two')	)     # one two
+
+	print '{} {}'.format('one', 'two')   # one two
+
+	%d DIGIT
+	--------
+	print '%d %d' % (1, 2)            # 1 2
+	print '{0} {1}'.format(1, 2)        # 1 2
+
+
+	Ejemplo de uso de .format
+	-------------------------
+	tag = 'h1'
+	texto = 'This is a text'
+	print ('<{0}>{1}</{0}>').format(tag, texto)
+
+	Format en Listas
+	----------------
+	lst = ('Jenn', 23)
+	sentence = 'My name is {0[0]} and I am {0[1]} years old.'.format(lst)
+	print sentence
+
+	Format en Diccionarios
+	----------------------
+	person = {'name': 'Jenn', 'age': 23}
+	# print (person['name'])
+	sentence = 'My name is {0[name]} and I am {1[age]} years old.'.format(person, person)
+	# Igual pero obtimizado
+	sentence = 'My name is {0[name]} and I am {0[age]} years old.'.format(person)
+	print sentence
+
+	Format en Clases
+	----------------
+	class Person():
+		
+		def __init__(self, name, age):
+			self.name = name
+			self.age = age
+
+	p1 = Person('Jenn', 23)
+	sentence = 'My name is {0.name} and I am {0.age} years old.'.format(p1)
+	print sentence
+
+	Format con Argumentos
+	---------------------
+	sentence = 'My name is {name} and I am {age} years old.'.format(name='Jenn', age=23)
+	print sentence	
+
+
+	KeyWards (Desempaquetando diccionario)
+	--------------------------------------
+
+	Esta es la manera mas comoda y legible de usar format con diccionarios.
+	**person, desempaqueta el diccionario y expone las key, value pairs
+
+	person = {'name': 'Jenn', 'age': 23}
+	sentence = 'My name is {name} and I am {age} years old.'.format(**person)
+	print sentence
+
+	Format de Numeros y ceros a la izquierda
+	---------------------------------------------
+	- Tener en cuenta lo siguiente:
+	  Si usamos : dentro de {} le indica a python que queremos formatear la salida
+
+	  Lo que sigue indica la cantidad de espacios vacios a la izquierda. En este caso 2 vacios a la izquierda.
+	 
+		for i in range(1, 11):
+			sentence = 'The value is {:2}'.format(i)
+			print(sentence) 
+	 
+	  Si colocamos un :05 indicamos 5 caracteres a la izquierda y que se completen con 0
+
+		for i in range(1, 11):
+			sentence = 'The value is {:05}'.format(i)
+			print(sentence)
+
+	Decimales
+	---------
+
+	- Supongamos que queremos los primeros 2 decimales del numero pi
+
+	pi = 3.1459265
+	sentence = 'Pi is equal to {:.2f}'.format(pi)
+	print sentence
+
+	- Notar que el . indica que todo lo que esta en la parte entera se imprime
+	  luego los 2 decimales del tipo float
+
+	Mezclando puntuacion con , y decimales
+	--------------------------------------
+	sentence1 = '1 MB is equal to {:f} bytes'.format(1000**2)
+	sentence2 = '1 MB is equal to {:.2f} bytes'.format(1000**2)
+	sentence3 = '1 MB is equal to {:,.2f} bytes'.format(1000**2)
+	print sentence1
+	print sentence2
+	print sentence3
+
+
+Casting
+-------
+	my_string = "I Love Python "
+	my_integer = 101
+
+	print my_string + str(my_integer)
+
+
+Diccionarios
+------------
+	import maya.cmds as cmds
+	 
+	# Define un diccionario vacio
+	myDict = {}
+
+	# Agrega bajo la key Alumnos... la lista de alumnos con sus edades y direcciones
+	myDict['Alumnos'] = [["Juan", 23, "Av xxx 123"], ["Pedro", 21, "Calle Esparza 30"]]
+	# Agrega bajo la key Profesores a los docentes
+	myDict['Profesores'] = [["Matias", 38, "Potosi 25"], ["Maria", 42, "9 de Julio 10"]]
+
+	# Recorre e imprime todo el diccionario
+	for key, value in myDict.iteritems():
+		print (key, value)
+		
+	# Imprime solo los alumnos
+	for i in range(len(myDict)):
+		print myDict['Alumnos'][i]
+
+	# Imprime los datos solo del profesor Matias	
+	for i in range(len(myDict)):
+		# print myDict['Profesores'][i]
+		if (myDict['Profesores'][i][0] == "Matias"):		
+			print "Matias, " + str(myDict['Profesores'][i][1]) + " años. Vive en "+ myDict['Profesores'][i][2]
+	
+	
+Paquetes y Modulos
+------------------
+
+	Packages -> directorios
+	Modules  -> .py
+
+	- Los Packages son los directorios que creamos para organizar los archivos.
+	- Los Modules son los archivos .py que creamos.
+
+	Desde un .py podemos importar otro .py si se encuentra dentro del mismo directorio o Package
+
+	Para importar un modulo de otro packete, el mismo debe estar fisicamene en el mismo directorio del .py
+
+	archivo1.py
+	MiPackage (Directorio)
+		archivo2.py
+
+
+	archivo1.py
+	import MiPackage.archivo2 as arch2
+
+	- Si queremos importar una clase o metodo especifico de un modulo escribimos
+
+	from modulo import clase/metodo
+
+	clase/metodo.xxx
+
+
+	from PointMod import Point
+
+	p1 = Point()
+	p1.move(2, 2)
+
+
+	El as de import se usa para dos cosas: 
+		1) Para que sea menos tediosa la escritura
+		2) Por si ya tenemos otra clase llamada de esa manera en el scope de este codigo
+
+
+
+	Vamos a un ejemplo de Modules y Packages. Supongamos la siguiente estructura:
+
+	/                                  	Root
+	main.py                           
+
+	Drawing/                          	Package
+		__init__.py
+		point-call.py
+			class Point()                 
+		point-docstring.py
+	        class Point()
+		Maths/     						Package                    
+			__init__.py
+			Theorem.py
+
+
+	Cada vez que creamos un Package o subfolder, debemos crear el archivo __init__.py
+
+	Absolute import
+	---------------
+	Se especifica la ruta completa hacia la clase. 3 ejemplos
+		       Package   Module     All Module content
+		import Drawing.point-call
+		p1 = Point()                                       Este metodo importa todas las clases (no recomendado)
+		---------------------------------------		
+			 Package  Module           Class
+		from Drawing.point-call import Point
+		p1 = Point()                                       Es metodo es el mas recomendado ya que importa la clase Point del modulo point-Call del package Drawing
+		---------------------------------------
+			 Package        Module
+		from Drawing import point-call
+		     Module     Class
+		p1 = point-call.Point()
+
+	Relative import
+	---------------
+	Se usa la notacion de . y ..
+	.Package                Directorio Actual  (En general no es necesario poner . cuando estamos en el mismo folder)
+	..Package               Directorio Anterior
+
+	Ejemplos:
+
+	Si point-call.py quiere llamar a point-docstring.py:
+		
+		point-call.py
+		from .point-docstring import Point
+
+		point-call.py
+		from point-docstring import Point         (Por lo general el . no se usa si importamos un modulo del mismo directorio)
+
+
+	Si Theorem.pyg necesita importar Drawing/point-docstring
+
+		point-docstring.py
+		from ..point-docstring.py import Point
+
+
+	__init__
+	---------
+	El archivo __init__.py nos permite importar cosas directo de los packages (directorios)
+
+	Si quisieramos importar la clase Point() del modulo point-docstring escribiriamos en algun archivo .py del raiz:
+
+	import Drawing.point-docstring.Point()
+
+	Ahora, si colocamos lo siguiente en el archivo __init__ que se encuentra en Drawing
+
+	from .Point-docstring import Point()
+
+	Podriamos desde algun archivo del root escribir 
+
+	import Drawing.Point                 Esto es porque expusimos la clase Point a nivel del Package
+
+	o podriamos escribir
+
+	from Drawing import Point()
+
+	Es como construir un indice de clases y poder usarlas directo llamando al package.LaClase
+	Tambien es como que el modulo se convierte en un package ya que se accede a su contenido desde afuera directamente
+
+	Visibilidad y Organizando Packages y Modules
+	--------------------------------------------
+	En las clases podemos guardar variables globales que no tienen conflictos con otras del mismo nombre.
+
+	Supongamos que tenemos un modulo.py que accede a una base de datos. En el mismo modulo se instancia la clase de acceso a base de datos.
+	Que pasaria si varios usuarios importan esta clase? 
+	Habria un enorme delay ya que se esta queriendo abrir la conexion a la base de manera simultanea.
+
+		Ejemplo de mala implementacion:
+		-------------------------------
+		class Database:
+			# The database implementation
+			pass
+		# End Database
+
+		database1 = Database()
+
+		- En este ejemplo se ve como al importar este Modulo, se realiza automaticamente el proceso de instancia y esto no esta bien
+
+
+		Ejemplo de buena implementacion:
+		--------------------------------
+		class Database:
+			# The database implementation
+			pass
+		# End Database
+
+		database1 = None
+
+		def initialize_database():
+			global database1 = Database()
+		# End initialize_database
+
+		- En ese segundo ejemplo se ve como no se crea una instancia de la clase Database hasta que no se llama al metodo initialize_database
+		- Tambien se observa que la instancia de Database() asignada a la variable database1 es global permitiendo que sea accesible desde cualquier otro modulo.
+
+
+	__main__
+	--------
+		__main__  Se usa para obligar al uso del import para usar los metodos y no poder ejecutar el .py directo
+
+		Existe una variable llamado __name__ que si equivale a __main__ indica que el codigo se ejecuto directo.
+		Si por ejemplo, el codigo se ejecuto desde otro modulo llamado contabilidad __name__ va a equivaler a contabilidad
+		Ejemplo que permite instanciar la base de datos solo si ejecutamos el modulo directo desde la consola.
+
+		programa.py
+		
+		class Database:
+			# The database implementation
+			pass
+
+		def main():
+			global database1
+			database1 = Database()
+
+		if __name__ == '__main__':
+			main()
+
+		El ejemplo anterior muestra como se instancia la base de datos una sola vez, a nivel global y cuando se ejecuta el puntero de arranque.
+		Si este archivo se vuelve a importar o instanciar desde dentro del programa, no se volvera a instanciar la base de datos.
+
+		Si queremos correr el metodo main desde afuera y saltarnos el condicional que no lo correria, tipeamos lo siguiente
+
+		import programa		
+		programa.main()                 (forzamos a que el metodo main corra)

@@ -23,7 +23,7 @@ C:/Rigging Dojo - Python 101 (On Demand)/RD_Python/setup.py
 -----------------------------------------------------------
 print 'Startup!'
 
-Cuando el maya arrnca deberiamos ver en la consola el print Startup!
+Cuando el maya arranca deberiamos ver en la consola el print Startup!
 
 Tambien podemos comprobar si el path fue cargado usando los siguientes comandos en la consola del maya
 
@@ -46,7 +46,7 @@ Recapitulando:
 	como el frame rate, las unidades, etc
 	tambien lo usamos para importar nuestras herramientas. En este caso la ui
 
-	import ui.ui as ui    # El primer ui refiere al directorio. el segundo al .py adentro del directorio.
+	import ui.ui as ui    # El primer ui refiere al directorio (Package). el segundo al .py (Module) adentro del directorio.
 	reload(ui)  # left it like this in develop mode
 
 

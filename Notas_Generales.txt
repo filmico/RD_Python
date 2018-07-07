@@ -1,3 +1,5 @@
+Si el audio se dezfaza, en VLC apretar la letra j para retrasar el audio 3000 ms.
+
 Links:
 -------
 https://ondemand.riggingdojo.com/products/maya-python-101-course/categories/528216/posts/1711450
