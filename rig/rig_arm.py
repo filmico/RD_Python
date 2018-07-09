@@ -1,108 +1,150 @@
 import maya.cmds as cmds
 
-# Create IK-FK-Rig Arm
+ik_Jnt_Lst = [['ik_shoulder_jnt', [0, 0, 0]], 
+            ['ik_elbow_jnt', [3, 0, -1]], 
+            ['ik_wrist_jnt', [6, 0, 0]], 
+            ['ik_wristEnd_jnt', [8, 0, 0]] ]
 
-# List of Arm Joints
-armIK = (['ik_shoulder_jnt', [-6, 0, 1]], ['ik_elbow_jnt', [0, 0, 0]], ['ik_wrist_jnt', [5, 0, 1]], ['ik_wristEnd_jnt', [7, 0, 1]])
-armFK = (['fk_shoulder_jnt', [-6, 0, 1]], ['fk_elbow_jnt', [0, 0, 0]], ['fk_wrist_jnt', [5, 0, 1]], ['fk_wristEnd_jnt', [7, 0, 1]])
-armRig = (['rig_shoulder_jnt', [-6, 0, 1]], ['rig_elbow_jnt', [0, 0, 0]], ['rig_wrist_jnt', [5, 0, 1]], ['rig_wristEnd_jnt', [7, 0, 1]])
+fk_Jnt_Lst = [['fk_shoulder_jnt', [0, 0, 0]], 
+            ['fk_elbow_jnt', [3, 0, -1]], 
+            ['fk_wrist_jnt', [6, 0, 0]], 
+            ['fk_wristEnd_jnt', [8, 0, 0]] ]
 
+rig_Jnt_Lst = [['rig_shoulder_jnt', [0, 0, 0]], 
+               ['rig_elbow_jnt', [3, 0, -1]], 
+               ['rig_wrist_jnt', [6, 0, 0]], 
+               ['rig_wristEnd_jnt', [8, 0, 0]] ]
 
 # Dict of armIK Controls
 armIKCtrl = {}
-armIKCtrl['grpOffsetDetails_arm'] = ['ik_arm_grp']  # Name of the grp
-armIKCtrl['ctrlShapeDetails_arm'] = ['ik_arm_ctl', [1, 0, 0], [0, 0, 0]]  # name, normal, center
+                        # startJnt, endJnt, IkHandlName, Solver, Priority, Weight
+armIKCtrl['ikh_arm'] = [ik_Jnt_Lst[0][0], ik_Jnt_Lst[2][0], 'ikh_arm', 'ikRPsolver', 2, 1] 
+                        # offsetGrp_name, Ctrl_name, Ctrl_normal, Ctrl_radius, Ctrl_position, Ctrl_rotation
+armIKCtrl['ctrl_arm'] = ['ik_armOffset_grp', 'ik_arm_ctl', [0, 1, 0], 1, [0, 0, 0], [0, 0, 0]] 
+armIKCtrl['ctrl_elbow'] = ['ik_elbowOffset_grp', 'ik_elbow_ctl', [1, 0, 0], 0.5, [0, 0, 0], [0, 0, 0]]
+armIKCtrl['pv_elbow'] = ['ik_pvElbow']
+
+# Dict of armFK Controls
+armFKCtrl = {}
+
+armFKCtrl['ctrl_arm'] = ['fk_armOffset_grp', 'fk_arm_ctl', [0, 1, 0], 1, [0, 0, 0], [0, 0, 0]] 
+armFKCtrl['ctrl_foreArm'] = ['fk_foreArmOffset_grp', 'fk_foreArm_ctl', [0, 1, 0], 1, [0, 0, 0], [0, 0, 0]] 
 
 
-# Create Joints from the list received
-def createJoints(jntsInfo):
-    # Cycle an create the joints
-    for i in jntsInfo:
-        cmds.joint(name=i[0], position=i[1])
-        cmds.joint(i[0], edit=True, zeroScaleOrient=True, orientJoint='xyz', secondaryAxisOrient='yup')
-    # Deselect the last joint
-    cmds.select(clear=True)
+# Create and orient Joints based on a list of joint names and positions
+def createJoints(jntLst, orientJointAxis, secondaryAxis, zeroLast=False):   
+    for item in jntLst:
+        cmds.joint(n=item[0], p=item[1], rad=0.5)
 
-def createControl(ctrlName, ctrlNormal, ctrlCenter, ctrlOffsetGroupName):
+    # Orient Joints
+    cmds.joint(jntLst[0][0], e=True, oj=orientJointAxis, sao=secondaryAxis, ch=True)
 
+    # Zero the joint orient of the last Jnt
+    if zeroLast:
+        lastJointIndex = len(jntLst) - 1
+        lastJointName = jntLst[lastJointIndex][0]
+        cmds.setAttr( lastJointName + '.jointOrientX', 0)
+        cmds.setAttr( lastJointName + '.jointOrientY', 0)
+        cmds.setAttr( lastJointName + '.jointOrientZ', 0)
+        cmds.select(cl=True)
+
+    # Deselect
+    cmds.select(cl=True)
+
+# This function alow to create the wrist and pole vectors controllers
+# We receive a dictionary like armIKCtrl['ctrl_arm']
+def createControl(ctrlDetail):
     # Create Control GRP
-    cmds.group(empty=True, name=ctrlOffsetGroupName)
-    # Create Shape to be placed under the offset group
-    cmds.circle(name=ctrlName, normal=ctrlNormal, center=ctrlCenter)
-    # Delete Construction History
-    cmds.delete(constructionHistory=True)
+    cmds.group(empty=True, name=ctrlDetail[0])
+
+    # Create Control Shape
+    cmds.circle(n=ctrlDetail[1], nr=ctrlDetail[2], r=ctrlDetail[3], ch=0)
+
     # Parent the control to the OffsetGroup
-    cmds.parent(ctrlName, ctrlOffsetGroupName)
+    cmds.parent(ctrlDetail[1], ctrlDetail[0])
     cmds.select(clear=True)
 
-
-def posConstraint(objList, world=True):
-
-    # Obtain Parent position
-    parentPos = cmds.xform(objList[1], translation=True, worldSpace=world, query=True)
-
-    # Move Child to the Parent's pos
-    cmds.xform(objList[0], translation=parentPos, worldSpace=world)
-    cmds.select(clear=True)
+    # Move and rotate the Control to match indicated position
+    cmds.xform(ctrlDetail[0], t=ctrlDetail[4], ws=True)
+    cmds.xform(ctrlDetail[0], ro=ctrlDetail[5], ws=True)
 
 
 def createArm():
 
-    # Create IK Joints
-    createJoints(armIK)
-    # Create FK Joints
-    createJoints(armFK)
-    # Create Rig Joints
-    createJoints(armRig)
+    # JOINTS
+    # -------
 
-    # Create armIK Control
-    createControl(armIKCtrl['ctrlShapeDetails_arm'][0],   # control Shape
-                  armIKCtrl['ctrlShapeDetails_arm'][1],   # control Normal
-                  armIKCtrl['ctrlShapeDetails_arm'][2],   # control Center
-                  armIKCtrl['grpOffsetDetails_arm'][0]    # control Offset Group
-                  )
+    # Create IK Joints and orient
+    createJoints(jntLst=ik_Jnt_Lst, orientJointAxis='yxz', secondaryAxis='yup')
+    # Create FK Joints and orient
+    createJoints(jntLst=fk_Jnt_Lst, orientJointAxis='yxz', secondaryAxis='yup')
+    # Create Rig Joints and orient
+    createJoints(jntLst=rig_Jnt_Lst, orientJointAxis='yxz', secondaryAxis='yup')
 
-    # Move armIK Control to Wrist Position
-    posConstraint([armIKCtrl['grpOffsetDetails_arm'][0], armIK[2][0]], world=True)
+    # IK
+    # --
+
+    # Create IkHandle
+    cmds.ikHandle(n=armIKCtrl['ikh_arm'][2], sj=armIKCtrl['ikh_arm'][0], ee=armIKCtrl['ikh_arm'][1], sol=armIKCtrl['ikh_arm'][3], p=armIKCtrl['ikh_arm'][4], w=armIKCtrl['ikh_arm'][5])
+    
+    # Obtain the Wrist position and update the dictionary of the arm control
+    armIKCtrl['ctrl_arm'][4] = cmds.xform(ik_Jnt_Lst[2][0], q=True, t=True, ws=True)
+    # Obtain the Wrist rotation and update the dictionary of the arm control
+    armIKCtrl['ctrl_arm'][5] = cmds.xform(ik_Jnt_Lst[2][0], q=True, ro=True, ws=True)
+    # Obtain the Elbow position for the PoleVector
+    armIKCtrl['ctrl_elbow'][4] = cmds.xform(ik_Jnt_Lst[1][0], q=True, t=True, ws=True)
+    # Move the Z position to place the PV to the back
+    armIKCtrl['ctrl_elbow'][4][2] = armIKCtrl['ctrl_elbow'][4][2] - 3
+
+    # Create Wrist Control
+    createControl(armIKCtrl['ctrl_arm'])
+    # Parent the IkHandle to the Wrist Control
+    cmds.parent(armIKCtrl['ikh_arm'][2], armIKCtrl['ctrl_arm'][1])
+    # Create PV Control
+    createControl(armIKCtrl['ctrl_elbow'])
+    # Create PoleVector Constraint
+    cmds.poleVectorConstraint(armIKCtrl['ctrl_elbow'][1], armIKCtrl['ikh_arm'][2], n=armIKCtrl['pv_elbow'][0])
+
+    # FK
+    # --
+    # Obtain the arm Fk position and update the dictionary of the fk arm control
+    armFKCtrl['ctrl_arm'][4] = cmds.xform(fk_Jnt_Lst[0][0], q=True, t=True, ws=True)
+    # Obtain the arm Fk rotation and update the dictionary of the fk arm control
+    armFKCtrl['ctrl_arm'][5] = cmds.xform(fk_Jnt_Lst[0][0], q=True, ro=True, ws=True)
+    # Obtain the foreArm Fk position and update the dictionary of the fk arm control
+    armFKCtrl['ctrl_foreArm'][4] = cmds.xform(fk_Jnt_Lst[1][0], q=True, t=True, ws=True)
+    # Obtain the foreArm Fk rotation and update the dictionary of the fk arm control
+    armFKCtrl['ctrl_foreArm'][5] = cmds.xform(fk_Jnt_Lst[1][0], q=True, ro=True, ws=True)
+
+    # Create fk Arm Control
+    createControl(armFKCtrl['ctrl_arm'])
+    # Create fk foreArm Control
+    createControl(armFKCtrl['ctrl_foreArm'])
+
+    # Parent the foreArm ctrl_Grp to the Arm Ctrl
+    cmds.parent(armFKCtrl['ctrl_foreArm'][0], armFKCtrl['ctrl_arm'][1]) 
+
+    # Connect the Fk Controls to the Fk joints
+    # Arm
+    cmds.connectAttr(armFKCtrl['ctrl_arm'][1] + '.rotateX', fk_Jnt_Lst[0][0] + '.rotateX')
+    cmds.connectAttr(armFKCtrl['ctrl_arm'][1] + '.rotateY', fk_Jnt_Lst[0][0] + '.rotateY')  
+    cmds.connectAttr(armFKCtrl['ctrl_arm'][1] + '.rotateZ', fk_Jnt_Lst[0][0] + '.rotateZ')  
+    # foreArm
+    cmds.connectAttr(armFKCtrl['ctrl_foreArm'][1] + '.rotateX', fk_Jnt_Lst[1][0] + '.rotateX')
+    cmds.connectAttr(armFKCtrl['ctrl_foreArm'][1] + '.rotateY', fk_Jnt_Lst[1][0] + '.rotateY')
+    cmds.connectAttr(armFKCtrl['ctrl_foreArm'][1] + '.rotateZ', fk_Jnt_Lst[1][0] + '.rotateZ')
 
 
-    # Create IK Rig
-    cmds.ikHandle( name='ikh_arm', startJoint='ik_shoulder_jnt', endEffector='ik_wrist_jnt', solver='ikRPsolver', priority=2, weight=1)
+# createArm()
 
-    # # Create Control GRP
-    # cmds.group(empty=True, name='ik_arm_grp')
-    #
-    # # Create Shape to be placed under the offset group
-    # cmds.circle(name='ik_arm_ctl',  normal=(1, 0, 0), center=(0, 0, 0) )
-    # cmds.parent('ik_arm_ctl', 'ik_arm_grp')
+'''
+# Connect IK and FK to Rig Joints
+# -------------------------------
+# Create Custom Attribute on Arm Control
 
-    # Obtain the Wrist Postion
-    # pos = cmds.xform('ik_wrist_jnt', translation = True, worldSpace=True, query=True)
+select -r ik_arm_Ctl ;
+addAttr -ln "FKIK"  -at double  -min 0 -max 1 -dv 0 |Grp_ctrl_ikWrist|ik_arm_Ctl;
+setAttr -e-keyable true |Grp_ctrl_ikWrist|ik_arm_Ctl.FKIK;
+'''
 
-    # Move the Group to the IK position
-    # cmds.xform('ik_arm_grp', translation = pos, worldSpace=True)
-
-    # Parent the IkHandle below the hand ctl shape
-    cmds.parent('ikh_arm', 'ik_arm_ctl')
-
-
-
-    # Create PoleVector Group & Control
-    cmds.group(empty=True, name='ik_poleVect_grp')
-    cmds.circle(name='ik_poleVect_ctl',  normal=(1, 0, 0), center=(0, 0, 0) )
-    cmds.parent( 'ik_poleVect_ctl', 'ik_poleVect_grp' )
-
-    # Find the lenght of the Arm (by looking at the X Axis)
-    armLengh = cmds.xform('ik_elbow_jnt', translation = True, worldSpace=False, query=True)[0]
-
-    # Move the poleVector to the back at the Lenght+1 of the arm
-    cmds.xform('ik_poleVect_grp', translation = [0,0,((armLengh*-1)-1)], worldSpace=True)
-
-    # Contraint the PoleVector to the IKHandle
-    cmds.poleVectorConstraint( 'ik_poleVect_ctl', 'ikh_arm' )
-
-
-
-    # Create FK Rig
-
-    # Connect IK and FK to Rig joints (Blender Custom Attribute, etc)
+print "Script rig_Arm Done!"

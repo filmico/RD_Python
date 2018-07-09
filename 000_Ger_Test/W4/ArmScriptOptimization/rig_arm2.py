@@ -17,13 +17,15 @@ rig_Jnt_Lst = [['rig_shoulder_jnt', [0, 0, 0]],
 
 # Dict of armIK Controls
 armIKCtrl = {}
-
 					    # startJnt, endJnt, IkHandlName, Solver, Priority, Weight
 armIKCtrl['ikh_arm'] = [ik_Jnt_Lst[0][0], ik_Jnt_Lst[2][0], 'ikh_arm', 'ikRPsolver', 2, 1] 
 				        # offsetGrp_name, Ctrl_name, Ctrl_normal, Ctrl_radius, Ctrl_position, Ctrl_rotation
 armIKCtrl['ctrl_arm'] = ['ik_armOffset_grp', 'ik_arm_ctl', [0, 1, 0], 1, [0, 0, 0], [0, 0, 0]] 
 armIKCtrl['ctrl_elbow'] = ['ik_elbowOffset_grp', 'ik_elbow_ctl', [1, 0, 0], 0.5, [0, 0, 0], [0, 0, 0]]
 armIKCtrl['pv_elbow'] = ['ik_pvElbow']
+
+# Dict of armFK Controls
+armFKCtrl = {}
 
 armFKCtrl['ctrl_arm'] = ['fk_armOffset_grp', 'fk_arm_ctl', [0, 1, 0], 1, [0, 0, 0], [0, 0, 0]] 
 armFKCtrl['ctrl_foreArm'] = ['fk_foreArmOffset_grp', 'fk_foreArm_ctl', [0, 1, 0], 1, [0, 0, 0], [0, 0, 0]] 
@@ -110,14 +112,31 @@ def createArm():
 	# Obtain the arm Fk rotation and update the dictionary of the fk arm control
 	armFKCtrl['ctrl_arm'][5] = cmds.xform(fk_Jnt_Lst[0][0], q=True, ro=True, ws=True)
 	# Obtain the foreArm Fk position and update the dictionary of the fk arm control
-	armFKCtrl['ctrl_foreArm'][4] = cmds.xform(fk_Jnt_Lst[0][0], q=True, t=True, ws=True)
+	armFKCtrl['ctrl_foreArm'][4] = cmds.xform(fk_Jnt_Lst[1][0], q=True, t=True, ws=True)
 	# Obtain the foreArm Fk rotation and update the dictionary of the fk arm control
-	armFKCtrl['ctrl_foreArm'][5] = cmds.xform(fk_Jnt_Lst[0][0], q=True, ro=True, ws=True)
+	armFKCtrl['ctrl_foreArm'][5] = cmds.xform(fk_Jnt_Lst[1][0], q=True, ro=True, ws=True)
 
 	# Create fk Arm Control
 	createControl(armFKCtrl['ctrl_arm'])
 	# Create fk foreArm Control
-	createControl(armFKCtrl['ctrl_foreArm'])	
+	createControl(armFKCtrl['ctrl_foreArm'])
+
+	# Parent the foreArm ctrl_Grp to the Arm Ctrl
+	cmds.parent(armFKCtrl['ctrl_foreArm'][0], armFKCtrl['ctrl_arm'][1])	
+
+	# Connect the Fk Controls to the Fk joints
+	# Arm
+	cmds.connectAttr(armFKCtrl['ctrl_arm'][1] + '.rotateX', fk_Jnt_Lst[0][0] + '.rotateX')
+	cmds.connectAttr(armFKCtrl['ctrl_arm'][1] + '.rotateY', fk_Jnt_Lst[0][0] + '.rotateY')	
+	cmds.connectAttr(armFKCtrl['ctrl_arm'][1] + '.rotateZ', fk_Jnt_Lst[0][0] + '.rotateZ')	
+	# foreArm
+	cmds.connectAttr(armFKCtrl['ctrl_foreArm'][1] + '.rotateX', fk_Jnt_Lst[1][0] + '.rotateX')
+	cmds.connectAttr(armFKCtrl['ctrl_foreArm'][1] + '.rotateY', fk_Jnt_Lst[1][0] + '.rotateY')
+	cmds.connectAttr(armFKCtrl['ctrl_foreArm'][1] + '.rotateZ', fk_Jnt_Lst[1][0] + '.rotateZ')
+
+
+
+
 
 
 createArm()
@@ -125,47 +144,6 @@ createArm()
 
 
 '''
-
-
-# Create FK rig
-# -------------
-# Create Circles for Arm and ForeArms
-fk_arm_Ctrl = cmds.circle(n='fk_arm_Ctl', nr=(0, 1, 0), r=0.75, ch=0)
-fk_forArm_Ctrl = cmds.circle(n='fk_foreArm_Ctl', nr=(0, 1, 0), r=0.75, ch=0)
-cmds.select(cl=True)
-
-# Create Groups
-fk_arm_group = cmds.group(em=True, n='Grp_ctrl_fkArm')
-fk_foreArm_group = cmds.group(em=True, n='Grp_ctrl_fkForeArm')
-
-# Parent Controls to each group
-cmds.parent(fk_arm_Ctrl, fk_arm_group)
-cmds.parent(fk_forArm_Ctrl, fk_foreArm_group)
-
-# Obtain Arm Coordinates
-fk_arm_pos = cmds.xform('fk_shoulder_jnt', q=True, t=True, ws=True)
-
-# Obtain Elbow Coordinates
-fk_foreArm_pos = cmds.xform('fk_elbow_jnt', q=True, t=True, ws=True)
-
-# Move the Arm and Elbow Ctrl Groups to the respective Arm and Elbow Pos
-cmds.xform(fk_arm_group, t=fk_arm_pos, ws=True)
-cmds.xform(fk_foreArm_group, t=fk_foreArm_pos, ws=True)
-
-# Obtain The Rotation of the FK Shoulder and arm
-fk_shoulder_rot = cmds.xform('fk_shoulder_jnt', q=True, ro=True, ws=True)
-fk_foreArm_rot = cmds.xform('fk_elbow_jnt', q=True, ro=True, ws=True)
-
-# Rotate to group to replicate the rotation of the joints
-cmds.xform(fk_arm_group, ro=fk_shoulder_rot, ws=True)
-cmds.xform(fk_foreArm_group, ro=fk_foreArm_rot, ws=True)
-
-# Parent Elbow_Grp Ctrl to Shoulder Control
-cmds.parent(fk_foreArm_group, fk_arm_Ctrl)
-
-# Parent Constraint of FK controls to Fk Joints
-cmds.orientConstraint(fk_forArm_Ctrl, 'fk_elbow_jnt')
-cmds.orientConstraint(fk_arm_Ctrl, 'fk_shoulder_jnt')
 
 
 # Connect IK and FK to Rig Joints

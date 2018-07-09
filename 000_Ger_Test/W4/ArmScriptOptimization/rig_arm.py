@@ -1,5 +1,10 @@
 import maya.cmds as cmds
 
+# -----------------------------------------------------------
+# El script se re-escribio y la version nueva es rig_arm2.py
+# -----------------------------------------------------------
+
+
 ik_Jnt_Lst = [['ik_shoulder_jnt', [0, 0, 0]], 
             ['ik_elbow_jnt', [3, 0, -1]], 
             ['ik_wrist_jnt', [6, 0, 0]], 

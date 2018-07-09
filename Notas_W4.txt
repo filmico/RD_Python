@@ -82,4 +82,8 @@ Variables Globales
 
 	my_function()
 
-	print(a)	
+	print(a)
+
+	
+	Observar el uso de diccionarios en el script 000_Ger_Test/w4/rig_arm2.py
+	------------------------------------------------------------------------
