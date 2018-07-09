@@ -1,68 +1,85 @@
 Week 4:
 -------
 
-Startup del Maya
-----------------
-Cuando Maya arranca busca scripts en C:\Users\filmico\Documents\maya\scripts
-Ahi hay un archivo llamado userSetup.py donde podemos indicar los path que queremos que 
-se agreguen al momento del arranque.
+En el primer video Ryan explica lo mismo que se resumio en el pdf/word siguiente:
+	
+	C:\RDojo_Python101\W3\Maya Modules.pdf
 
-C:\Users\filmico\Documents\maya\scripts\userSetup.py
-----------------------------------------------------
-import os
-import sys
-import maya.cmds as cmds
-print "In User Setup"
+Connect Sublime to Maya
+-----------------------
+https://github.com/justinfx/MayaSublime
 
-# Agregamos los path que necesitamos
-sys.path.append('C:/Rigging Dojo - Python 101 (On Demand)/RD_Python')
-# Importamos startup.py de la carpeta que apendeamos recien.
-cmds.evalDeferred('import startup')
+https://fredrikaverpil.github.io/2013/07/15/send-mel-python-code-from-sublime-text-to-maya/
 
-C:/Rigging Dojo - Python 101 (On Demand)/RD_Python/setup.py
------------------------------------------------------------
-print 'Startup!'
+https://polycount.com/discussion/173627/solved-in-sublime3-cant-get-maya-python-autocompletion-to-work-help
 
-Cuando el maya arranca deberiamos ver en la consola el print Startup!
+Funciones
+---------
 
-Tambien podemos comprobar si el path fue cargado usando los siguientes comandos en la consola del maya
+	def myFunction(myVar):
+		result = "My Function takes: " + str(myVar)
+		return result
+		
+	myFuncReturn = myFunction("Apples")	
 
-import sys
-for s in sys.path:
-	print s
+	print myFuncReturn
 
 
+Assets
+------
+	Crear Assets: 
+		1) Seleccionar lo que queremos incluir en el asset
+		2) Create -> Assets -> Asset with Transform
 
-
-Recapitulando:
-==============
-1) Maya carga el siguiente archivo  C:\Users\filmico\Documents\maya\scripts\userSetup.py
-   - El mismo abre el puerto 4434 para comunicarse con un IDE externo
-   - Apendea el path C:/Rigging Dojo - Python 101 (On Demand)/RD_Python/
-   - Importa el archivo en idle startup.py del path apendeado
-
-2) startup.py  en el root de la carpeta apendeada
-	- Statup lo podemos usar para que maya cargue cosas que siempre queremos usar
-	como el frame rate, las unidades, etc
-	tambien lo usamos para importar nuestras herramientas. En este caso la ui
-
-	import ui.ui as ui    # El primer ui refiere al directorio (Package). el segundo al .py (Module) adentro del directorio.
-	reload(ui)  # left it like this in develop mode
+	Modificar Assets:
+		Modify -> Assets
 
 
 
+Variables Globales
+--------------------
 
-3) Modulo: 
-   - Por otro lado, en la carpeta C:\Users\filmico\Documents\maya\2016\modules
-   hay un archivo llamado RiggingTool.mod que carga un nuevo modulo y apunta a la misma carpeta custom que estamos usando.
+	http://python-textbok.readthedocs.io/en/1.0/Variables_and_Scope.html
 
-   - Su conenido es el siguiente:
+	Para modificar el valor de una varible que se encuentra fuera de una funcion, la volvemos a declarar pero global adentro de la funcion y despues le asignamos el valor.
+	Cuando 
 
-	+ Rigging_Tool 1.0 C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
-	RIGGING_TOOL=C:\Rigging Dojo - Python 101 (On Demand)\RD_Python
-	scripts: C:\Rigging Dojo - Python 101 (On Demand)\RD_Python   
+	a = 0
 
-   - Por diseño el modulo carga automaticamente el archivo userSetup.py que se encuentre en la raiz del directorio que indica el modulo en el tag scripts: 
+	def xxx():
+		global a
+		a = 3
+	
 
+	Ejemplo 1:
+	----------
 
+	a = 0
 
+	def my_function():
+	    a = 3
+	    print(a)
+
+	my_function()
+
+	print(a)	
+
+	When we call the function, the print statement inside outputs 3 – but why does the print statement at the end of the program output 0?
+
+	By default, the assignment statement creates variables in the local scope. So the assignment inside the function does not modify the global variable a – it creates a new local variable called a, and assigns the value 3 to that variable. The first print statement outputs the value of the new local variable – because if a local variable has the same name as a global variable the local variable will always take precedence. The last print statement prints out the global variable, which has remained unchanged.
+
+	What if we really want to modify a global variable from inside a function? We can use the global keyword:
+
+	Ejemplo 2:
+	----------
+
+	a = 0
+
+	def my_function():
+	    global a
+	    a = 3
+	    print(a)
+
+	my_function()
+
+	print(a)	
