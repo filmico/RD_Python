@@ -10,3 +10,81 @@ https://ondemand.riggingdojo.com/products/maya-python-101-course/categories/5292
 https://docs.python.org/2/tutorial/classes.html
 
 https://www.youtube.com/watch?v=E7voPQQtO6w
+
+
+
+Metodo __init__   y __del__
+----------------------------
+	El metodo __init__ es el constructor en python.
+	Cuando instanciamos una clase, lo que esta dentro de __init__ se ejecutya automaticamente.
+	
+	El metodo __del__ es el opuesto al constructor y es lo que se ejecuta automaticamente cuando se termina de correr el script.
+
+	Ejemplo: En el siguiente ejemplo se ve como en el constructor se intenta crear la tabla si no existe.
+	         Esto se ejecutara cada vez que se instancie la clase Database.
+	         Una vez que ejecutemos cualquiera de los metodos del backend, python correra el metodo __del__ cerrando la base de datos.
+
+	
+    backend.py
+
+	import sqlite3
+	class Database:
+
+		def __init__(self, db):
+			conn=sqlite3.connect(db)
+			self.cur=conn.cursor()
+			self.cur.execute("CREATE TABLE IF NOT EXIST book (id INTEGER PRIMARY, Title text)")
+			conn.commit()
+
+		def __del__(self):
+			self.conn.close()
+
+
+
+Herencia
+--------
+
+	Para heredar una clase, basta con indicar la herencia al definir la clase.
+	En el ejemplo que sigue se muestra como la clase Cuenta hereda de Database.
+
+	class Cuenta(Database):
+		xxxx
+
+Uso del init de la clase base
+-----------------------------
+	Supongamos que tenemos una clase Empleado que recibe nombre, apellido y salario y lo carga en variables de clase en el __init__
+	Luego una Developer que hereda de la Empleado y recibe el lenguaje en el que programa para el constructor __init__
+	Dado que lo interesante de la herencia es no repetir ademas de sobreescribir, veremos en el ejemplo que sigue, como se puede
+	usar el constructor del Developer para una parte y el constructor de la clase base para la otra de los parametros recibidos.
+
+	Esto esta explicado en el video Python OOP Tutorial 4 Inheritance - Creating Subclasses Youtube.mp4
+
+	class Employee():
+		
+		raise_pay = 1.04
+		
+		def __init__(self, name, surname, pay):
+			self.name = name
+			self.surname = surname
+			self.email = '{0}.{1}@gmail.com'.format(name, surname)
+			self.pay = pay
+
+		def raiseSalary(self):
+			self.pay = self.pay * raise_pay
+
+	class Developer(Employee):   	# hereda de Employee
+
+		raise_pay = 1.10
+
+		def __init__(self, name, surname, pay, languaje):
+			super().__init__(name, surname, pay)                # Esto pasa las 3 variables al init de Employee
+			self.languaje = languaje
+
+
+
+
+
+
+
+
+
