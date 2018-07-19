@@ -168,7 +168,19 @@ for key, value in armIKCtrl_Nuevo.iteritems():
 print armIKCtrl['ikh_arm'][2]	
 	
 	
+# Archivo que genera el Json base para el rig del brazo
+# -----------------------------------------------------
+	C:\RDojo_Python101\Repo\rig\rig_arm_JsonSetup.py
+
+	Este archivo contiene la definicion del diccionario que necesita C:\RDojo_Python101\Repo\rig\rig_arm.py para ejecutarse.
+	El diccionario que genera rig_arm_JsonSetup.py se guarda en C:\RDojo_Python101\Repo\layout\arm_Definition.json
+
+	Lo primero que hace C:\RDojo_Python101\Repo\rig\rig_arm.py es leer ese .json y desempaquetar el diccionario.
+
 	
+
+
+
 
 
 
